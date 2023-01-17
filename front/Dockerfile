@@ -1,8 +1,9 @@
 FROM node:16-alpine as angular
 WORKDIR /app
-COPY ./front/package*.json ./
+COPY package*.json ./
 RUN npm install
 COPY . .
+RUN ls
 RUN npm run build
 
 FROM nginx:alpine

@@ -1,15 +1,18 @@
 services:
   front:
+    image: front
     build: 
-      dockerfile: ./front/Dockerfile
+      context: ./front
+      dockerfile: Dockerfile
     volumes:
-      - ./scripts/nginx.conf /etc/nginx/conf.d/default.conf
+      - ./scripts/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 8081:80 
     
       
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest	
+    container_name: db
     ports:
       - 1433:1433
     environment:
@@ -19,12 +22,14 @@ services:
   
   mssqltools:
     image: mcr.microsoft.com/mssql-tools
+    container_name: mssqltools
     depends_on:
       - db
     volumes:
-      - ./scriopts/init-db.sql:/tmp/init-db.sql
-      - ./scripts/init.sh:init.sh
-    
+      - ./scripts/init-db.sql:/tmp/init-db.sql
+      - ./scripts/init.sh:/tmp/init.sh
+    command: /bin/bash ./tmp/init.sh
+
   api:
     image: api
     build:
